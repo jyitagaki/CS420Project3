@@ -69,11 +69,11 @@ public class Connect4 {
         }
         return turn == 1? maxScore:minScore;
     }
-
+    //checks favorability for AI
     private int evalBoard(Board b) {
     }
 
-    //checks game result
+    //checks game result win or lose
     private int checkResult(Board b) {
     }
 
