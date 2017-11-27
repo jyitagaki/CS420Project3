@@ -1,5 +1,6 @@
-/**
- * Created by joshi on 11/26/2017.
+/**Joshua Itagaki and Jose Sandoval
+ *CS 420
+ * Project 3 - 4 in a line AI game using a-b pruning
  */
 import java.util.Scanner;
 
