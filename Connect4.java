@@ -109,7 +109,7 @@ class Board{
         if(!isLegal(row, column)){
             System.out.println("Cannot place there");
         }
-        if(board[row][column] != '-'){
+        if(board[row][column] == '-'){
             board[row][column] = (char)player;
             return true;
         }
