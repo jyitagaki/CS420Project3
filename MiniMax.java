@@ -86,13 +86,194 @@ public class MiniMax
     }
 
     //checks favorability for AI
-    private int evalBoard(Board b)
-    {
+     private int evalBoard(Board b) {
+        int aiScore = 1;
+        int score = 0;
+        int blank = 0;
+        int moves = 0;
+        for(int i = 8; i >= 0; i--){
+            for(int j = 0; j <= 8; j++){
+                if(b.board[i][j] == '-' || b.board[i][j] == 'O'){
+                    continue;
+                }
+                if(j<=3){
+                    for(int k = 1; k < 4; k++){
+                        if(b.board[i][j+k] == 'X'){
+                            aiScore++;
+                        } else if(b.board[i][j+k] == 'O'){
+                            aiScore = 0;
+                            blank = 0;
+                            break;
+                        } else{
+                            blank++;
+                        }
+                    }
+                    moves = 0;
+                    if (blank > 0) {
+                        for(int r = 1; r < 4; r++){
+                            for(int c = 1; c < 4; c++){
+                                int row = i+r;
+                                int column = j+c;
+                                for(int m = i; m<=5; m++){
+                                    if(b.board[row][column]=='-'){
+                                        moves++;
+                                    } else{
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(moves != '-'){
+                        score += calcScore(aiScore,moves);
+                        aiScore = 1;
+                        blank = 0;
+                    }
+                }
+                if(i>=3){
+                    for(int k = 1; k < 4; k++){
+                        if(b.board[i-k][j]=='X'){
+                            aiScore++;
+                        } else if(b.board[i-k][j]=='O'){
+                            aiScore = 0;
+                            break;
+                        }
+                    }
+                    moves = 0;
+                    if(aiScore>0) {
+                        int row = i;
+                        int column = j;
+                        for (int m = i; m <= 5; m++) {
+                            if (b.board[row][column] == '-') {
+                                moves++;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    if(moves != '-'){
+                        score += calcScore(aiScore,moves);
+                    }
+                    aiScore = 1;
+                    blank = 0;
+                }
+                if(j>=3){
+                    for(int k = 1; k<4; k++){
+                        if(b.board[i][j-k] == 'X'){
+                            aiScore++;
+                        } else if(b.board[i-k][j]=='O'){
+                            aiScore = 0;
+                            break;
+                        } else{
+                            blank++;
+                        }
+                    }
+                    moves = 0;
+                    if(blank>0){
+                        for(int r = 1; r < 4; r++){
+                            for(int c = 1; c < 4; c++){
+                                int row = i+r;
+                                int column = j+c;
+                                for(int m = i; m<=5; m++){
+                                    if(b.board[row][column]=='-'){
+                                        moves++;
+                                    } else{
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(moves!='-'){
+                        score += calcScore(aiScore,moves);
+                    }
+                }
+                if(j<=3 && i>=3){
+                    for(int k = 1; k<4; k++){
+                        if(b.board[i][j-k] == 'X'){
+                            aiScore++;
+                        } else if(b.board[i-k][j]=='O'){
+                            aiScore = 0;
+                            break;
+                        } else{
+                            blank++;
+                        }
+                    }
+                    moves=0;
+                    if(blank > 0){
+                        for(int c = 1; c<4; c++){
+                            int column = j+c;
+                            int row = i-c;
+                            for(int m = row; m<=5; m++){
+                                if(b.board[m][column] == '-'){
+                                    moves++;
+                                } else if(b.board[m][column] == 'X'){
 
+                                } else{
+                                    break;
+                                }
+                            }
+                        }
+                        if(moves != 0){
+                            score += calcScore(aiScore,moves);
+                        }
+                        aiScore = 1;
+                        blank = 0;
+                    }
+                }
+                if(i >= 3 && j>=3){
+                    for(int k = 1; k < 4; k++){
+                        if(b.board[i-k][j-k]=='X'){
+                            aiScore++;
+                        } else if(b.board[i-k][j-k] == 'O'){
+                            aiScore = 0;
+                            blank = 0;
+                            break;
+                        } else {
+                            blank++;
+                        }
+                    }
+                    moves = 0;
+                    if (blank > 0) {
+                        for(int c = 1; c<4; c++) {
+                            int column = j + c;
+                            int row = i - c;
+                            for (int m = row; m <= 5; m++) {
+                                if (b.board[m][column] == '-') {
+                                    moves++;
+                                } else if (b.board[m][column] == 'X') {
 
-        return 0;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                        if(moves != 0){
+                            score += calcScore(aiScore,moves);
+                        }
+                        aiScore = 1;
+                        blank = 0;
+                    }
+                }
+            }
+        }
+        return score;
     }
 
+    private int calcScore(int aiScore, int moves) {
+        int moveScore = 4 - moves;
+        if(aiScore==0){
+            return 0;
+        } else if(aiScore==1){
+            return moveScore;
+        } else if(aiScore==2){
+            return moveScore+100;
+        } else if(aiScore==3){
+            return moveScore+1000;
+        } else{
+            return 30000;
+        }
+    }
     //checks game result win or lose
     public int checkResult(Board b)
     {
