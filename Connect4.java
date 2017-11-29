@@ -29,6 +29,11 @@ public class Connect4
         {
             MiniMax.getInstance().search(b, maximumTime);
             b.displayMoves(firstTurn);
+            if(firstTurn == 1) {
+                b.placeTile(MiniMax.getAITurnX(), MiniMax.getAITurnY(), 'X');
+            } else if(firstTurn == 2){
+                b.placeTile(MiniMax.getAITurnX(), MiniMax.getAITurnY(), 'O');
+            }
         }while(MiniMax.getInstance().checkResult(b) == 0);
     }
 }

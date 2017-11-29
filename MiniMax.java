@@ -1,10 +1,13 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class MiniMax
 {
     private static MiniMax instance = null;
-    private Board b;
-    private int maxDepth = 5;
-    private int locationX = -1; //row
-    private int locationY = -1; //column
+    private static Board b;
+    private static int maxDepth = 5;
+    private static int locationX = -1; //row
+    private  static int locationY = -1; //column
     private static int maximumTime; // Maximum time in seconds.
 
 
@@ -29,71 +32,65 @@ public class MiniMax
     }
 
 
-    private int ABPruning(int depth, int turn, int alpha, int beta){
-        if(beta <= alpha){
-            if(turn == 1){
-                return Integer.MAX_VALUE;
-            } else{
-                return Integer.MIN_VALUE;
+    private static int[] ABPruning(int depth, int turn, int alpha, int beta){
+        List<int[]> nextMove = checkMoves();
+        int[] rC = new int[2];
+        int score = 0;
+        int bRow = -1;
+        int bCol = -1;
+        if(maxDepth==0 || nextMove.size()==0){
+            score = evalBoard(b);
+            return new int[]{score, bRow,bCol};
+        }
+        for(int i = 0; i < nextMove.size(); i++){
+            rC = nextMove.get(i);
+            if(turn == 1) {
+                b.placeTile(rC[0], rC[1], 'X');
+                //score = ABPruning(depth+1, 2, alpha, beta)[0];
+                if(score > alpha){
+                    alpha = score;
+                    bRow = rC[0];
+                    bCol = rC[1];
+                }
+            } else if(turn == 2){
+                b.placeTile(rC[0], rC[1], 'O');
+                //score = ABPruning(depth+1, 2, alpha, beta)[0];
+                if(score < beta){
+                    beta = score;
+                    bRow = rC[0];
+                    bCol = rC[1];
+                }
+            }
+            b.undo(rC[0],rC[1]);
+            if(alpha >= beta){
+                break;
             }
         }
-        int result = checkResult(b);
-        if(result == 1){
-            return Integer.MAX_VALUE/2;
-        } else if(result == 2){
-            return Integer.MIN_VALUE/2;
-        } else if(result == 0){
-            return 0;
-        }
-        if(depth == maxDepth){
-            return evalBoard(b);
-        }
-        int maxScore = Integer.MIN_VALUE;
-        int minScore = Integer.MAX_VALUE;
-        for(int i = 0; i<=8; i++){
-            for(int j = 0; j<=8; j++){
-                int currScore = 0;
-                if(!b.isLegal(i,j)) continue;
-                if(turn == 1){
-                    b.placeTile(i,j,'X');
-                    currScore = ABPruning(depth+1, 2, alpha, beta);
-                    if(depth == 0){
-                        if(currScore > maxScore){
-                            locationX = i;
-                            locationY = j;
-                        }
-                        if(currScore == Integer.MAX_VALUE/2){
-                            b.undo(i,j);
-                            break;
-                        }
-                    }
-                    maxScore = Math.max(currScore, maxScore);
-                    alpha = Math.max(currScore, alpha);
-                }
-                else if(turn == 2){
-                    b.placeTile(i, j, 'O');
-                    currScore = ABPruning(depth+1,1,alpha,beta);
-                    minScore = Math.min(currScore, minScore);
-                    beta = Math.min(currScore,beta);
-                }
-                b.undo(i,j);
-                if(currScore == Integer.MAX_VALUE || currScore == Integer.MIN_VALUE){
-                    break;
+        return new int[]{bRow,bCol};
+    }
+
+    private static List<int[]> checkMoves() {
+        List<int[]> nextMove = new ArrayList<int[]>();
+        for(int i = 0; i <= 8; i++){
+            for(int j = 0; j <= 8; j++){
+                if(b.isLegal(i,j)){
+                    nextMove.add(new int[] {i,j});
                 }
             }
         }
-        return turn == 1? maxScore:minScore;
+        return nextMove;
     }
-    public int getAITurnX(){
-        locationX = ABPruning(0,1,Integer.MIN_VALUE,Integer.MAX_VALUE);
-        return locationX;
+
+    public static int getAITurnX(){
+        int[] locationX = ABPruning(0,1,Integer.MIN_VALUE,Integer.MAX_VALUE);
+        return locationX[0];
     }
-    public int getAITurnY(){
-        locationY = ABPruning(0,1,Integer.MIN_VALUE,Integer.MAX_VALUE);
-        return locationY;
+    public static int getAITurnY(){
+        int[] locationY = ABPruning(0,1,Integer.MIN_VALUE,Integer.MAX_VALUE);
+        return locationY[1];
     }
     //checks favorability for AI
-     private int evalBoard(Board b) {
+     private static int evalBoard(Board b) {
         int aiScore = 1;
         int score = 0;
         int blank = 0;
@@ -195,79 +192,12 @@ public class MiniMax
                         score += calcScore(aiScore,moves);
                     }
                 }
-                if(j<=3 && i>=3){
-                    for(int k = 1; k<4; k++){
-                        if(b.board[i][j-k] == 'X'){
-                            aiScore++;
-                        } else if(b.board[i-k][j]=='O'){
-                            aiScore = 0;
-                            break;
-                        } else{
-                            blank++;
-                        }
-                    }
-                    moves=0;
-                    if(blank > 0){
-                        for(int c = 1; c<4; c++){
-                            int column = j+c;
-                            int row = i-c;
-                            for(int m = row; m<=5; m++){
-                                if(b.board[m][column] == '-'){
-                                    moves++;
-                                } else if(b.board[m][column] == 'X'){
-
-                                } else{
-                                    break;
-                                }
-                            }
-                        }
-                        if(moves != 0){
-                            score += calcScore(aiScore,moves);
-                        }
-                        aiScore = 1;
-                        blank = 0;
-                    }
-                }
-                if(i >= 3 && j>=3){
-                    for(int k = 1; k < 4; k++){
-                        if(b.board[i-k][j-k]=='X'){
-                            aiScore++;
-                        } else if(b.board[i-k][j-k] == 'O'){
-                            aiScore = 0;
-                            blank = 0;
-                            break;
-                        } else {
-                            blank++;
-                        }
-                    }
-                    moves = 0;
-                    if (blank > 0) {
-                        for(int c = 1; c<4; c++) {
-                            int column = j + c;
-                            int row = i - c;
-                            for (int m = row; m <= 5; m++) {
-                                if (b.board[m][column] == '-') {
-                                    moves++;
-                                } else if (b.board[m][column] == 'X') {
-
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                        if(moves != 0){
-                            score += calcScore(aiScore,moves);
-                        }
-                        aiScore = 1;
-                        blank = 0;
-                    }
-                }
             }
         }
         return score;
     }
 
-    private int calcScore(int aiScore, int moves) {
+    private static int calcScore(int aiScore, int moves) {
         int moveScore = 4 - moves;
         if(aiScore==0){
             return 0;
@@ -282,7 +212,7 @@ public class MiniMax
         }
     }
     //checks game result win or lose
-    public int checkResult(Board b)
+    public static int checkResult(Board b)
     {
         int xCounter;
         int oCounter;
