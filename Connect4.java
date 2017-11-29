@@ -4,6 +4,7 @@
  * Project 3 - 4 in a line AI game using a-b pruning
  */
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Connect4

@@ -6,8 +6,9 @@ public class Board
     public char[][] board = new char[9][9];
     public static int firstTurn = 0;
     private static Scanner scanner = new Scanner(System.in);
-    String opponentMove;
-    ArrayList<String> moves = new ArrayList<>();
+    private String opponentMove;
+    private ArrayList<String> moves = new ArrayList<>();
+    private int turnCounter = 0;
 
     public Board(int firstTurn){
         this.firstTurn = firstTurn;
@@ -68,6 +69,7 @@ public class Board
             int column = Character.getNumericValue(move.charAt(1));
             placeTile(row, column, 'O');
             displayBoard();
+            moves.add(move);
             return true;
         }
 
@@ -94,18 +96,20 @@ public class Board
     public void displayMoves(int player)
     {
         String movementLog = "";
+        String playerMove = "";
 
         switch (player)
         {
             case 1:
+                playerMove = MiniMax.getInstance().search(this, 0);
                 displayBoard();
                 movementLog += "Player's move is: " +
-                        "\nPlayer vs. Opponent";
+                        "\n\tPlayer vs. Opponent";
                 askHumanInput();
                 break;
             case 2:
                 calculateNextMove(askHumanInput());
-                movementLog += "Opponent vs. Player";
+                movementLog += "\tOpponent vs. Player";
                 break;
             default:
                 break;
@@ -113,7 +117,7 @@ public class Board
 
         for(int i = 0; i < moves.size(); i++)
         {
-            movementLog += (i + 1) + moves.get(i);
+            movementLog += "\n " + (i + 1) + ".     " + moves.get(i);
         }
 
         System.out.println(movementLog);

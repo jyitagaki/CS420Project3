@@ -19,12 +19,13 @@ public class MiniMax
         return instance;
     }
 
-    public void search(Board board, int maximumTime)
+    public String search(Board board, int maximumTime)
     {
         b = board;
         this.maximumTime = maximumTime;
 
         // Prune tree.
+        return null;
     }
 
 
@@ -85,42 +86,81 @@ public class MiniMax
     }
 
     //checks favorability for AI
-    private int evalBoard(Board b) {
+    private int evalBoard(Board b)
+    {
+
+
         return 0;
     }
 
     //checks game result win or lose
     public int checkResult(Board b)
     {
-        int xCounter = 0;
-        int oCounter = 0;
+        int xCounter;
+        int oCounter;
 
         // Horizontal check
-        for(int i = 0; i <= 8; i++)
+        for(int i = 1; i <= 8; i++)
         {
-            for(int j = 0; j <= 8; j++)
-            {
-                if(b.board[i][j] == 'X')
-                    xCounter++;
-            }
+            xCounter = 0;
+            oCounter = 0;
 
-            if(xCounter == 4)
-                return 1;
+            for(int j = 1; j <= 8; j++)
+            {
+
+                if(b.board[i][j] == 'X')
+                {
+                    xCounter++;
+                    oCounter = 0;
+                }
+                else if(b.board[i][j] == 'O')
+                {
+                    oCounter++;
+                    xCounter = 0;
+                }
+                else
+                {
+                    xCounter = 0;
+                    oCounter = 0;
+                }
+
+                if(xCounter == 4)
+                    return 1;
+                else if(oCounter == 4)
+                    return -1;
+            }
         }
 
         // Vertical check
         for(int i = 0; i <= 8; i++)
         {
+            xCounter = 0;
+            oCounter = 0;
+
             for(int j = 0; j <= 8; j++)
             {
                 if(b.board[j][i] == 'X')
+                {
                     xCounter++;
+                    oCounter = 0;
+                }
+                else if(b.board[j][i] == 'O')
+                {
+                    oCounter++;
+                    xCounter = 0;
+                }
+                else
+                {
+                    xCounter = 0;
+                    oCounter = 0;
+                }
+
+                if(xCounter == 4)
+                    return 1;
+                else if(oCounter == 4)
+                    return -1;
             }
-
-            if(xCounter == 4)
-                return 1;
         }
-
 
         return 0;
     }
