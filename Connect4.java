@@ -32,7 +32,7 @@ public class Connect4
             if(firstTurn == 1) {
                 b.placeTile(MiniMax.getAITurnX(), MiniMax.getAITurnY(), 'X');
             } else if(firstTurn == 2){
-                b.placeTile(MiniMax.getAITurnX(), MiniMax.getAITurnY(), 'O');
+                b.placeTile(MiniMax.getAITurnX(), MiniMax.getAITurnY(), 'X');
             }
         }while(MiniMax.getInstance().checkResult(b) == 0);
     }
