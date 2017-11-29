@@ -84,7 +84,11 @@ public class MiniMax
         }
         return turn == 1? maxScore:minScore;
     }
-
+    public int getAITurn(){
+        int location = -1;
+        ABPruning(0,1,Integer.MIN_VALUE,Integer.MAX_VALUE);
+        return location;
+    }
     //checks favorability for AI
      private int evalBoard(Board b) {
         int aiScore = 1;
